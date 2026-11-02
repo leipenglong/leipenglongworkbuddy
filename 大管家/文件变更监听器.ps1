@@ -40,7 +40,7 @@ if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Forc
 
 function Write-Log([string]$level, [string]$msg) {
     $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] [$level] $msg"
-    Add-Content -Path $LogFile -Value $line -Encoding UTF8 -ErrorAction SilentlyContinue
+    [System.IO.File]::AppendAllText($LogFile, $line + [Environment]::NewLine, (New-Object System.Text.UTF8Encoding($false)))
 }
 
 function Get-Snapshot {
@@ -126,7 +126,7 @@ try {
         Write-Log "INFO" "稳定期结束，触发备份"
         if ($GitBash -and (Test-Path $GitBash)) {
             $unixScript = $BackupScript.Replace('\', '/')
-            $out = & $GitBash -lc "bash '$unixScript'" 2>&1 | Out-String
+            $out = & $GitBash -c "bash '$unixScript'" 2>&1 | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::Default.GetBytes($_)) } | Out-String
             Write-Log "INFO" ("备份执行结果: " + $out)
         } else {
             Write-Log "ERROR" "未找到 bash 可执行文件"

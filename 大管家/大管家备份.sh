@@ -25,6 +25,11 @@
 
 set -u
 
+# 统一 UTF-8 输出，避免被 PowerShell / 计划任务按 ANSI 读取时乱码
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+export PYTHONIOENCODING=utf-8
+
 BASE="C:/Users/Administrator/Desktop/leipenglongworkbuddy"
 REMOTE="https://github.com/leipenglong/leipenglongworkbuddy.git"
 BRANCH="main"
