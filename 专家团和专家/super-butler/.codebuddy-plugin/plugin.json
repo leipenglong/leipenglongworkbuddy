@@ -1,0 +1,64 @@
+{
+  "name": "super-butler",
+  "version": "1.0.0",
+  "description": "Big Butler - 需求梳理中枢与专家调度中枢：先理解拆解需求再输出可执行方案，专家就位后调度专业任务并汇总，全程不编造不确定信息。",
+  "author": {
+    "name": "Administrator",
+    "email": ""
+  },
+  "agents": [
+    "./agents/super-butler.md"
+  ],
+  "skills": [
+    "./skills/expert-registry"
+  ],
+  "expertType": "agent",
+  "agentName": "super-butler",
+  "displayName": {
+    "en": "Big Butler",
+    "zh": "大管家"
+  },
+  "profession": {
+    "en": "Big Butler · Requirement Planning & Expert Dispatch",
+    "zh": "大管家 · 需求梳理与专家调度"
+  },
+  "displayDescription": {
+    "en": "Takes in every request you throw at it, clarifies and breaks the work into executable plans, then dispatches specialist tasks to the right expert and consolidates the results. Never fabricates uncertain information.",
+    "zh": "接收你的全部需求，先理解梳理、拆解规划成可执行方案，再调度专家团承接专业任务，全程不编造信息。"
+  },
+  "avatar": "avatars/expert.png",
+  "categoryId": "10-ProjectQuality",
+  "defaultInitPrompt": {
+    "zh": "帮我梳理这个需求，列出需要我补充的信息，并拆解成可执行的步骤。",
+    "en": "Help me clarify this requirement, list the information you need from me, and break it into executable steps."
+  },
+  "plugin": "super-butler",
+  "tags": [
+    {
+      "en": "Requirement Analysis",
+      "zh": "需求梳理"
+    },
+    {
+      "en": "Task Breakdown",
+      "zh": "任务拆解"
+    },
+    {
+      "en": "Expert Dispatch",
+      "zh": "专家调度"
+    }
+  ],
+  "quickPrompts": [
+    {
+      "en": "Help me clarify this requirement, list the information you need from me, and break it into executable steps.",
+      "zh": "帮我梳理这个需求，列出需要我补充的信息，并拆解成可执行的步骤。"
+    },
+    {
+      "en": "Turn these fragmented thoughts into a complete plan framework, filling in the key gaps first.",
+      "zh": "把这堆碎片想法整理成一个完整的方案框架，先补全关键环节。"
+    },
+    {
+      "en": "List my current experts and their statuses, and tell me who should handle this request.",
+      "zh": "列出我当前的专家清单和各自状态，说明这次该派给谁。"
+    }
+  ]
+}

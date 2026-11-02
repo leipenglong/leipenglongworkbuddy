@@ -1,0 +1,60 @@
+# ===== 大管家备份仓库 · 忽略规则 =====
+
+# Git 内部目录
+.git/
+
+# ===== 缓存与临时 =====
+cache/
+.cache/
+.cache/
+tmp/
+temp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ===== 草稿 =====
+草稿/
+draft/
+drafts/
+*.draft
+*.草稿
+
+# ===== 备份工作副本（不应进版本库）=====
+.git-sync/
+.git-sync/
+
+# ===== 日志（运行时产物，不入库）=====
+*.log
+logs/
+备份日志/*.log
+
+# ===== 大二进制文件 =====
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.exe
+*.dll
+*.so
+*.dmg
+*.pkg
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+System Volume Information/

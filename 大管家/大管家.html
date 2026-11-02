@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大管家 · 控制台</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --bg-soft:#11161d;
+    --panel:#161b22;
+    --panel-2:#1c232c;
+    --line:#262d38;
+    --line-soft:#1f2630;
+    --txt:#e6edf3;
+    --txt-2:#a9b4c0;
+    --txt-3:#7d8894;
+    --accent:#3fb950;
+    --accent-dim:#1f6f33;
+    --accent-soft:rgba(63,185,80,.12);
+    --amber:#d29922;
+    --amber-soft:rgba(210,153,34,.12);
+    --blue:#58a6ff;
+    --blue-soft:rgba(88,166,255,.12);
+    --danger:#f85149;
+    --radius:12px;
+    --radius-sm:8px;
+    --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f6f8fa;
+      --bg-soft:#eef1f4;
+      --panel:#ffffff;
+      --panel-2:#f6f8fa;
+      --line:#d0d7de;
+      --line-soft:#e4e8ed;
+      --txt:#1f2328;
+      --txt-2:#59636e;
+      --txt-3:#818b98;
+      --accent:#1a7f37;
+      --accent-dim:#1a7f37;
+      --accent-soft:rgba(26,127,55,.1);
+      --amber:#9a6700;
+      --amber-soft:rgba(154,103,0,.1);
+      --blue:#0969da;
+      --blue-soft:rgba(9,105,218,.1);
+      --danger:#cf222e;
+      --shadow:0 1px 3px rgba(31,35,40,.08);
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65;
+    font-size:14px;
+    padding:28px 20px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* ---------- Header ---------- */
+  .hero{
+    background:linear-gradient(160deg,var(--panel) 0%,var(--bg-soft) 100%);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 28px;
+    margin-bottom:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:3px;
+    background:linear-gradient(90deg,var(--accent),var(--blue) 55%,transparent);
+  }
+  .hero h1{
+    font-size:24px;font-weight:650;letter-spacing:-.2px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .hero h1 .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-soft);flex:none;
+  }
+  .hero .sub{
+    color:var(--txt-2);font-size:13px;margin-top:8px;
+  }
+  .hero .sub b{color:var(--txt);font-weight:600}
+
+  /* ---------- Stage switch ---------- */
+  .stages{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;
+  }
+  .stage{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;background:var(--panel-2);
+    transition:.18s ease;
+  }
+  .stage.active{
+    border-color:var(--accent);background:var(--accent-soft);
+    box-shadow:inset 0 0 0 1px var(--accent-soft);
+  }
+  .stage .k{
+    display:flex;align-items:center;gap:8px;
+    font-weight:640;font-size:14px;margin-bottom:6px;
+  }
+  .stage .k .badge{
+    font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;
+    border:1px solid var(--line);color:var(--txt-3);background:var(--panel);
+    letter-spacing:.3px;
+  }
+  .stage.active .k .badge{
+    border-color:var(--accent);color:var(--accent);background:transparent;
+  }
+  .stage p{color:var(--txt-2);font-size:13px}
+  .stage .hint{
+    margin-top:8px;font-size:12px;color:var(--txt-3);
+    padding-top:8px;border-top:1px dashed var(--line-soft);display:none;
+  }
+  .stage.active .hint{display:block}
+
+  /* ---------- Section ---------- */
+  section{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:20px 22px;margin-bottom:16px;
+  }
+  .sec-head{
+    display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .sec-head .icon{
+    width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+    background:var(--panel-2);border:1px solid var(--line);font-size:14px;flex:none;
+  }
+  .sec-head h2{font-size:15.5px;font-weight:640;letter-spacing:-.1px}
+  .sec-head .tail{
+    margin-left:auto;font-size:12px;color:var(--txt-3);
+  }
+
+  /* ---------- Style cards ---------- */
+  .style-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;
+  }
+  .style-card{
+    border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+    padding:12px 14px;background:var(--panel-2);
+  }
+  .style-card .t{font-weight:620;font-size:13.5px;margin-bottom:4px}
+  .style-card .d{color:var(--txt-2);font-size:12.5px;line-height:1.6}
+
+  /* ---------- Rules ---------- */
+  ol.rules{padding-left:0;list-style:none;counter-reset:r}
+  ol.rules li{
+    counter-increment:r;position:relative;padding:9px 0 9px 34px;
+    border-bottom:1px solid var(--line-soft);color:var(--txt-2);font-size:13.5px;
+  }
+  ol.rules li:last-child{border-bottom:0}
+  ol.rules li::before{
+    content:counter(r);position:absolute;left:0;top:9px;
+    width:21px;height:21px;border-radius:6px;
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--txt-3);font-size:11px;font-weight:600;
+    display:grid;place-items:center;
+  }
+  ol.rules li b{color:var(--txt);font-weight:600}
+  .note{
+    margin-top:14px;padding:11px 14px;border-radius:var(--radius-sm);
+    background:var(--amber-soft);border:1px solid rgba(210,153,34,.28);
+    color:var(--txt-2);font-size:13px;
+  }
+  .note b{color:var(--amber)}
+
+  /* ---------- Expert chips ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--line);background:var(--panel-2);
+    padding:5px 11px;border-radius:99px;font-size:12.5px;
+  }
+  .chip .st{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+  .chip .st.inuse{background:var(--amber)}
+  .chip .st.retired{background:var(--txt-3)}
+  .empty{
+    border:1px dashed var(--line);border-radius:var(--radius-sm);
+    padding:16px 18px;color:var(--txt-3);font-size:13px;background:var(--panel-2);
+  }
+  .empty b{color:var(--txt-2)}
+  .count-line{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;color:var(--txt-2);margin-bottom:12px;
+  }
+  .count-line b{color:var(--accent);font-weight:650}
+
+  /* ---------- Code block ---------- */
+  pre{
+    background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:14px 16px;overflow-x:auto;font-size:12.5px;line-height:1.85;
+    font-family:"SF Mono",SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+    color:var(--txt-2);
+  }
+  pre .t{color:var(--txt);font-weight:600}
+  pre .c{color:var(--txt-3)}
+
+  /* ---------- Manager ---------- */
+  .mgr-top{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;
+  }
+  .stat{
+    border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:10px 16px;background:var(--panel-2);min-width:104px;
+  }
+  .stat .n{font-size:22px;font-weight:680;line-height:1.2;letter-spacing:-.5px}
+  .stat .l{font-size:11.5px;color:var(--txt-3);margin-top:2px}
+  .stat.exp .n{color:var(--accent)}
+  .stat.team .n{color:var(--blue)}
+
+  .tabs{
+    display:inline-flex;gap:2px;padding:3px;
+    background:var(--panel-2);border:1px solid var(--line);
+    border-radius:9px;margin-bottom:14px;
+  }
+  .tab{
+    border:0;background:transparent;color:var(--txt-2);
+    padding:6px 16px;border-radius:6px;font-size:13px;font-weight:560;
+    cursor:pointer;font-family:inherit;transition:.15s;
+  }
+  .tab:hover{color:var(--txt)}
+  .tab.on{background:var(--panel);color:var(--txt);box-shadow:var(--shadow)}
+
+  .btn{
+    border:1px solid var(--line);background:var(--panel-2);color:var(--txt);
+    padding:7px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:560;
+    cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--txt-3)}
+  .btn.primary{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent;color:var(--txt-2)}
+  .btn.danger{color:var(--danger);border-color:transparent;background:transparent}
+  .btn.danger:hover{background:rgba(248,81,73,.1)}
+  .btn.sm{padding:4px 10px;font-size:12px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{
+    text-align:left;font-weight:600;font-size:12px;color:var(--txt-3);
+    padding:9px 12px;border-bottom:1px solid var(--line);
+    letter-spacing:.3px;text-transform:uppercase;
+  }
+  td{padding:11px 12px;border-bottom:1px solid var(--line-soft);color:var(--txt-2);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--panel-2)}
+  td.name{color:var(--txt);font-weight:600;white-space:nowrap}
+  .st-tag{
+    display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;
+    border-radius:99px;border:1px solid var(--line);color:var(--txt-3);
+  }
+  .st-tag.ready{color:var(--accent);border-color:var(--accent-dim);background:var(--accent-soft)}
+  .st-tag.inuse{color:var(--amber);border-color:rgba(210,153,34,.4);background:var(--amber-soft)}
+  .st-tag.retired{color:var(--txt-3);background:transparent}
+  .row-act{display:flex;gap:4px;justify-content:flex-end}
+  .table-scroll{overflow-x:auto}
+
+  /* ---------- Modal ---------- */
+  .mask{
+    position:fixed;inset:0;background:rgba(0,0,0,.62);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
+    backdrop-filter:blur(3px);
+  }
+  .mask.on{display:flex}
+  .modal{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;width:100%;max-width:520px;
+    max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .modal h3{
+    padding:18px 22px;border-bottom:1px solid var(--line);
+    font-size:15px;font-weight:640;position:sticky;top:0;background:var(--panel);
+  }
+  .form{padding:18px 22px}
+  .field{margin-bottom:14px}
+  .field label{
+    display:block;font-size:12.5px;font-weight:600;color:var(--txt-2);
+    margin-bottom:5px;
+  }
+  .field label .req{color:var(--danger);margin-left:2px}
+  .field input,.field select,.field textarea{
+    width:100%;background:var(--bg);border:1px solid var(--line);
+    border-radius:var(--radius-sm);padding:8px 11px;color:var(--txt);
+    font-size:13.5px;font-family:inherit;transition:.15s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:0;border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .field textarea{resize:vertical;min-height:60px;line-height:1.6}
+  .field .hintline{font-size:11.5px;color:var(--txt-3);margin-top:4px}
+  .modal-foot{
+    padding:14px 22px;border-top:1px solid var(--line);
+    display:flex;justify-content:flex-end;gap:8px;
+  }
+  .err{color:var(--danger);font-size:12.5px;margin-top:6px;display:none}
+  .err.on{display:block}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:10px 20px;font-size:13px;color:var(--txt);box-shadow:0 8px 30px rgba(0,0,0,.4);
+    opacity:0;pointer-events:none;transition:.25s;z-index:80;
+  }
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer{
+    text-align:center;color:var(--txt-3);font-size:12px;
+    padding:22px 10px 0;line-height:2;
+  }
+  footer .sep{opacity:.4;margin:0 8px}
+  .toast-msg{
+    position:fixed;top:14px;right:14px;background:var(--panel);
+    border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+    font-size:12.5px;color:var(--txt-2);z-index:99;opacity:0;
+    transition:.3s;pointer-events:none;
+  }
+  .toast-msg.on{opacity:1}
+  @media (max-width:640px){
+    .stages{grid-template-columns:1fr}
+    body{padding:16px 12px 40px}
+    .hero,.section,section{padding:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ Hero ============ -->
+  <div class="hero">
+    <h1><span class="dot"></span>大管家 · 控制台</h1>
+    <div class="sub">
+      需求梳理中枢 + 专家调度中枢 · <b>专家团与专家统一管理台</b>
+    </div>
+
+    <div class="stages">
+      <div class="stage" id="stage1" data-stage="1">
+        <div class="k">阶段一 · 梳理规划 <span class="badge">当前默认</span></div>
+        <p>接收你的所有需求，先理解、梳理、拆解、规划，输出清晰方案，不擅自编造不确定信息。</p>
+        <div class="hint">专家团就位前，管家只做梳理与规划，不主动调用任何子专家。</div>
+      </div>
+      <div class="stage" id="stage2" data-stage="2">
+        <div class="k">阶段二 · 调度中枢 <span class="badge">专家就位后启用</span></div>
+        <p>专家团就位后切换为调度模式，只调度、不代做专业内容。</p>
+        <div class="hint">命中已关联专家能力时进入本阶段，专业产出全部由专家完成。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 交互风格 ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="icon">💬</div>
+      <h2>交互风格</h2>
+    </div>
+    <div class="style-grid">
+      <div class="style-card">
+        <div class="t">不花哨</div>
+        <div class="d">不啰嗦，逻辑清晰</div>
+      </div>
+      <div class="style-card">
+        <div class="t">先规划后执行</div>
+        <div class="d">你下达指令，我先梳理规划，你确认后再继续</div>
+      </div>
+      <div class="style-card">
+        <div class="t">适度提问</div>
+        <div class="d">可主动收集必要信息，但不过度追问</div>
+      </div>
+      <div class="style-card">
+        <div class="t">碎片收拢</div>
+        <div class="d">只给碎片想法时，先补全框架，不直接写成品</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 通用核心规则 ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="icon">📋</div>
+      <h2>通用核心规则（两阶段共用）</h2>
+    </div>
+    <ol class="rules">
+      <li>先读懂用户原始诉求，区分：<b>咨询提问 / 内容创作 / 方案策划 / 资料整理 / 工具执行 / 思路构思</b>。</li>
+      <li>语言克制简洁，优先结构化（列表、分段），不要多余废话。</li>
+      <li>不懂、不确定的内容如实说明，不虚构资料和数据。</li>
+      <li>只给碎片想法时，主动收拢思路、补全框架，不直接开始写成品。</li>
+      <li>可主动提问收集必要信息，但不过度追问。</li>
+    </ol>
+    <div class="note">
+      <b>阶段划分：</b>阶段一（梳理规划期）不主动调用任何子专家；阶段二才进入调度。
+    </div>
+  </section>
+
+  <!-- ============ 调度中枢 ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="icon">🛰️</div>
+      <h2>调度中枢</h2>
+      <span class="tail">专家就位后启用</span>
+    </div>
+
+    <p style="color:var(--txt-2);font-size:13.5px;margin-bottom:16px">
+      你是任务调度中心，不自己完成专业任务，只理解需求、判断归属、调用已关联专家，最后做汇总整理。
+    </p>
+
+    <div class="sec-head" style="margin-bottom:10px">
+      <h2 style="font-size:13.5px;font-weight:600;color:var(--txt-2)">已关联专家清单（与控制台页面保持一致）</h2>
+    </div>
+    <div class="count-line">当前已关联专家：<b id="expCountInline">0</b> 位</div>
+    <div id="expChips" class="chips"></div>
+    <div id="expEmpty" class="empty">
+      暂无预置专家，你可在下方「专家管理」区自行添加，添加后此处与页面自动同步；管家不预先推荐或虚构专家。
+    </div>
+
+    <div class="sec-head" style="margin:20px 0 10px">
+      <h2 style="font-size:13.5px;font-weight:600;color:var(--txt-2)">调度规则</h2>
+    </div>
+    <ol class="rules">
+      <li>匹配单一专家 → 直接转发需求并等待返回；匹配多个 → 按顺序分阶段调用；无匹配 → 你做梳理提问并告知暂无对应专家。</li>
+      <li>❌ <b>禁止自己代替专家输出专业内容。</b></li>
+      <li>收到专家结果后做汇总、整理、结构化，可补充风险提醒与优化建议。</li>
+      <li>需求信息不足 → 优先向用户收集，不直接调用专家。</li>
+      <li>用户指定专家 → 直接服从，跳过自动判断。</li>
+      <li>用户想直接对话专家 → 放行，不再拦截调度。</li>
+    </ol>
+
+    <div class="sec-head" style="margin:20px 0 10px">
+      <h2 style="font-size:13.5px;font-weight:600;color:var(--txt-2)">输出格式</h2>
+    </div>
+<pre><span class="t">【需求识别】</span>一句话总结需求
+<span class="t">【调度判断】</span>调用XX专家 / 暂无匹配专家，需要补充信息
+<span class="t">【转发指令】</span>（自动发给专家）
+<span class="c">（等专家返回后，再输出）</span>
+<span class="t">【汇总结果】</span></pre>
+  </section>
+
+  <!-- ============ 专家管理 ============ -->
+  <section id="mgr">
+    <div class="sec-head">
+      <div class="icon">🗂️</div>
+      <h2>专家管理</h2>
+    </div>
+
+    <div class="mgr-top">
+      <div class="stat exp">
+        <div class="n" id="statExp">0</div>
+        <div class="l">已关联专家</div>
+      </div>
+      <div class="stat team">
+        <div class="n" id="statTeam">0</div>
+        <div class="l">专家团</div>
+      </div>
+      <div style="margin-left:auto">
+        <button class="btn primary" id="btnAdd">+ 添加专家</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="expert">专家</button>
+      <button class="tab" data-tab="team">专家团</button>
+    </div>
+
+    <div class="table-scroll">
+      <table id="tblExpert">
+        <thead>
+          <tr>
+            <th>专家姓名 / 代号</th>
+            <th>角色定位</th>
+            <th>核心专长</th>
+            <th>状态</th>
+            <th style="text-align:right">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyExpert"></tbody>
+      </table>
+      <div id="emptyExpert" class="empty">尚未添加专家。</div>
+
+      <table id="tblTeam" style="display:none">
+        <thead>
+          <tr>
+            <th>专家团名称</th>
+            <th>目标</th>
+            <th>成员</th>
+            <th>状态</th>
+            <th style="text-align:right">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyTeam"></tbody>
+      </table>
+      <div id="emptyTeam" class="empty" style="display:none">尚未添加专家团。</div>
+    </div>
+
+    <div class="note" style="margin-top:16px">
+      在此登记你后续的专家；每个专家单独成条，保留原始措辞，状态与关键决策清晰可查。添加后上方调度中枢的「已关联专家」数自动同步。
+    </div>
+  </section>
+
+  <footer>
+    大管家控制台 · 数据仅保存在本地浏览器（localStorage），不上传
+    <span class="sep">·</span>
+    已关联专家由你自行添加，与角色设定同步
+  </footer>
+</div>
+
+<!-- ============ Modal ============ -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3 id="mTitle">添加专家</h3>
+    <form class="form" id="mForm">
+      <div class="field">
+        <label for="fName">专家姓名 / 代号 <span class="req">*</span></label>
+        <input id="fName" type="text" placeholder="例：小红书运营专家" autocomplete="off">
+        <div class="hintline">保留原始措辞，不要改写</div>
+      </div>
+      <div class="field">
+        <label for="fRole">角色定位 <span class="req">*</span></label>
+        <input id="fRole" type="text" placeholder="例：负责小红书账号内容与标题产出" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fExp">核心专长</label>
+        <input id="fExp" type="text" placeholder="例：爆款标题、种草文案、账号冷启动" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fTask">可承接任务类型</label>
+        <input id="fTask" type="text" placeholder="例：写小红书标题、做账号运营方案" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fStatus">状态</label>
+        <select id="fStatus">
+          <option value="ready">待命</option>
+          <option value="inuse">在用</option>
+          <option value="retired">退役</option>
+        </select>
+      </div>
+      <div class="field" id="teamFields" style="display:none">
+        <label for="fMembers">成员清单</label>
+        <input id="fMembers" type="text" placeholder="例：小红书运营专家、文案专家（逗号分隔）" autocomplete="off">
+        <div class="hintline">每位成员单独成条</div>
+      </div>
+      <div class="field" id="goalField" style="display:none">
+        <label for="fGoal">目标</label>
+        <input id="fGoal" type="text" placeholder="例：打通从选题到成稿的内容流水线" autocomplete="off">
+      </div>
+      <div class="err" id="mErr">请填写必填项</div>
+    </form>
+    <div class="modal-foot">
+      <button class="btn ghost" id="mCancel">取消</button>
+      <button class="btn primary" id="mSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="toast-msg" id="tmsg"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "super-butler-console-v1";
+  var experts = [];
+  var teams = [];
+  var tab = "expert";
+  var editingId = null;
+  var addingMode = "expert";
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- storage ---------- */
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(!raw) return;
+      var d = JSON.parse(raw);
+      experts = Array.isArray(d.experts) ? d.experts : [];
+      teams   = Array.isArray(d.teams)   ? d.teams   : [];
+    }catch(e){ experts=[]; teams=[]; }
+  }
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify({experts:experts, teams:teams}));
+    }catch(e){ toast("本地存储写入失败"); }
+  }
+
+  function uid(){ return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  /* ---------- toast ---------- */
+  var tTimer;
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("on");
+    clearTimeout(tTimer);
+    tTimer = setTimeout(function(){ t.classList.remove("on"); }, 2000);
+  }
+
+  /* ---------- status ---------- */
+  var ST = { ready:{label:"待命", cls:"ready"}, inuse:{label:"在用", cls:"inuse"}, retired:{label:"退役", cls:"retired"} };
+  var TST = { plan:{label:"规划中", cls:"ready"}, build:{label:"搭建中", cls:"inuse"}, live:{label:"在用", cls:"inuse"} };
+  function stTag(code, map){
+    var m = (map||ST)[code] || {label:code||"-", cls:""};
+    return '<span class="st-tag '+m.cls+'">'+m.label+'</span>';
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    // counts
+    $("statExp").textContent = experts.length;
+    $("statTeam").textContent = teams.length;
+    $("expCountInline").textContent = experts.length;
+
+    // chips
+    var chips = $("expChips");
+    var html = "";
+    for(var i=0;i<experts.length;i++){
+      var e = experts[i];
+      var cls = e.status === "inuse" ? "inuse" : (e.status === "retired" ? "retired" : "");
+      html += '<span class="chip"><span class="st '+cls+'"></span>'+esc(e.name)+'</span>';
+    }
+    chips.innerHTML = html;
+    $("expEmpty").style.display = experts.length ? "none" : "block";
+
+    // expert table
+    var tb = $("tbodyExpert");
+    tb.innerHTML = "";
+    for(var j=0;j<experts.length;j++){
+      var x = experts[j];
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="name">'+esc(x.name)+'</td>'+
+        '<td>'+esc(x.role||"-")+'</td>'+
+        '<td>'+esc(x.exp||"-")+'</td>'+
+        '<td>'+stTag(x.status)+'</td>'+
+        '<td><div class="row-act">'+
+          '<button class="btn sm" data-edit="'+x.id+'">编辑</button>'+
+          '<button class="btn sm danger" data-del="'+x.id+'">删除</button>'+
+        '</div></td>';
+      tb.appendChild(tr);
+    }
+    $("emptyExpert").style.display = experts.length ? "none" : "block";
+
+    // team table
+    var tt = $("tbodyTeam");
+    tt.innerHTML = "";
+    for(var k=0;k<teams.length;k++){
+      var g = teams[k];
+      var mem = (g.members && g.members.length) ? g.members.map(esc).join("<br>") : "-";
+      var tr2 = document.createElement("tr");
+      tr2.innerHTML =
+        '<td class="name">'+esc(g.name)+'</td>'+
+        '<td>'+esc(g.goal||"-")+'</td>'+
+        '<td style="white-space:nowrap">'+mem+'</td>'+
+        '<td>'+stTag(g.status, TST)+'</td>'+
+        '<td><div class="row-act">'+
+          '<button class="btn sm" data-edit="'+g.id+'">编辑</button>'+
+          '<button class="btn sm danger" data-del="'+g.id+'">删除</button>'+
+        '</div></td>';
+      tt.appendChild(tr2);
+    }
+    $("emptyTeam").style.display = teams.length ? "none" : "block";
+
+    // tab visibility
+    var isExp = tab === "expert";
+    $("tblExpert").style.display  = isExp ? "table" : "none";
+    $("emptyExpert").style.display = (isExp && !experts.length) ? "block" : "none";
+    $("tblTeam").style.display    = isExp ? "none" : "table";
+    $("emptyTeam").style.display  = (!isExp && !teams.length) ? "block" : "none";
+    $("btnAdd").textContent = isExp ? "+ 添加专家" : "+ 添加专家团";
+  }
+
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  /* ---------- tabs ---------- */
+  var tabs = document.querySelectorAll(".tab");
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].addEventListener("click", function(ev){
+      tab = ev.currentTarget.getAttribute("data-tab");
+      var all = document.querySelectorAll(".tab");
+      for(var k=0;k<all.length;k++){ all[k].classList.remove("on"); }
+      ev.currentTarget.classList.add("on");
+      render();
+    });
+  }
+
+  /* ---------- stage switch ---------- */
+  var stages = document.querySelectorAll(".stage");
+  for(var s=0;s<stages.length;s++){
+    stages[s].addEventListener("click", function(ev){
+      var all = document.querySelectorAll(".stage");
+      for(var k=0;k<all.length;k++){ all[k].classList.remove("active"); }
+      ev.currentTarget.classList.add("active");
+    });
+  }
+  $("stage1").classList.add("active");
+
+  /* ---------- modal ---------- */
+  function openModal(mode, item){
+    addingMode = mode || tab;
+    editingId = item ? item.id : null;
+    var isTeam = addingMode === "team";
+
+    $("mTitle").textContent = item ? "编辑" + (isTeam ? "专家团" : "专家") : "添加" + (isTeam ? "专家团" : "专家");
+    $("teamFields").style.display = isTeam ? "block" : "none";
+    $("goalField").style.display  = isTeam ? "block" : "none";
+    $("mErr").classList.remove("on");
+
+    if(isTeam){
+      $("fName").value = item ? item.name : "";
+      $("fGoal").value = item ? (item.goal||"") : "";
+      $("fMembers").value = item ? ((item.members||[]).join("，")) : "";
+      $("fStatus").innerHTML =
+        '<option value="plan">规划中</option>'+
+        '<option value="build">搭建中</option>'+
+        '<option value="live">在用</option>';
+      $("fStatus").value = item ? (item.status||"plan") : "plan";
+      $("fRole").value=""; $("fExp").value=""; $("fTask").value="";
+    }else{
+      $("fName").value = item ? item.name : "";
+      $("fRole").value = item ? (item.role||"") : "";
+      $("fExp").value  = item ? (item.exp||"")  : "";
+      $("fTask").value = item ? (item.task||"") : "";
+      $("fStatus").innerHTML =
+        '<option value="ready">待命</option>'+
+        '<option value="inuse">在用</option>'+
+        '<option value="retired">退役</option>';
+      $("fStatus").value = item ? (item.status||"ready") : "ready";
+    }
+    $("mask").classList.add("on");
+    setTimeout(function(){ $("fName").focus(); }, 60);
+  }
+  function closeModal(){ $("mask").classList.remove("on"); editingId = null; }
+
+  $("btnAdd").addEventListener("click", function(){ openModal(tab, null); });
+  $("mCancel").addEventListener("click", closeModal);
+  $("mask").addEventListener("click", function(ev){ if(ev.target === $("mask")) closeModal(); });
+  document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") closeModal(); });
+
+  $("mSave").addEventListener("click", function(){
+    var name = $("fName").value.trim();
+    if(!name){
+      $("mErr").textContent = "请填写必填项：专家姓名 / 代号";
+      $("mErr").classList.add("on");
+      $("fName").focus();
+      return;
+    }
+    if(addingMode === "team"){
+      var goal = $("fGoal").value.trim();
+      if(!goal){
+        $("mErr").textContent = "请填写必填项：目标";
+        $("mErr").classList.add("on");
+        $("fGoal").focus();
+        return;
+      }
+      var members = $("fMembers").value.split(/[，,、;；\n]+/).map(function(s){return s.trim();}).filter(Boolean);
+      var tRec = {
+        id: editingId || uid(),
+        name: name,
+        goal: goal,
+        members: members,
+        status: $("fStatus").value
+      };
+      if(editingId){
+        for(var i=0;i<teams.length;i++){ if(teams[i].id === editingId){ teams[i] = tRec; break; } }
+        toast("专家团已更新");
+      }else{
+        teams.push(tRec);
+        toast("专家团已添加");
+      }
+    }else{
+      var role = $("fRole").value.trim();
+      if(!role){
+        $("mErr").textContent = "请填写必填项：角色定位";
+        $("mErr").classList.add("on");
+        $("fRole").focus();
+        return;
+      }
+      var eRec = {
+        id: editingId || uid(),
+        name: name,
+        role: role,
+        exp: $("fExp").value.trim(),
+        task: $("fTask").value.trim(),
+        status: $("fStatus").value
+      };
+      if(editingId){
+        for(var j=0;j<experts.length;j++){ if(experts[j].id === editingId){ experts[j] = eRec; break; } }
+        toast("专家已更新");
+      }else{
+        experts.push(eRec);
+        toast("专家已添加，已同步至调度中枢");
+      }
+    }
+    save();
+    render();
+    closeModal();
+  });
+
+  /* ---------- table actions ---------- */
+  document.addEventListener("click", function(ev){
+    var t = ev.target;
+    if(!t.getAttribute) return;
+
+    var del = t.getAttribute("data-del");
+    if(del){
+      var isT = teams.some(function(g){ return g.id === del; });
+      var arr = isT ? teams : experts;
+      for(var i=0;i<arr.length;i++){
+        if(arr[i].id === del){ arr.splice(i,1); break; }
+      }
+      save(); render();
+      toast(isT ? "专家团已删除" : "专家已删除");
+      return;
+    }
+
+    var ed = t.getAttribute("data-edit");
+    if(ed){
+      var g2 = null, e2 = null;
+      for(var a=0;a<teams.length;a++){ if(teams[a].id === ed){ g2 = teams[a]; break; } }
+      if(g2){ openModal("team", g2); return; }
+      for(var b=0;b<experts.length;b++){ if(experts[b].id === ed){ e2 = experts[b]; break; } }
+      if(e2) openModal("expert", e2);
+    }
+  });
+
+  /* ---------- init ---------- */
+  load();
+  render();
+})();
+</script>
+</body>
+</html>
