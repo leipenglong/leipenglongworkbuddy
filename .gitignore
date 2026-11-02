@@ -58,3 +58,7 @@ Thumbs.db
 desktop.ini
 $RECYCLE.BIN/
 System Volume Information/
+
+# ===== 大管家运行时产物 =====
+大管家/备份日志/
+.大管家/
