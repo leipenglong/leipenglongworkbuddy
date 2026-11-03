@@ -1,7 +1,7 @@
 ﻿# ============================================================================
 # 大管家 · 文件变更监听器（触发方式 B · 轮询实现）
 # ----------------------------------------------------------------------------
-# 监控目录：C:\Users\Administrator\Desktop\leipenglongworkbuddy
+# 监控目录：C:\Users\Administrator\Desktop\leipenglongworkbuddy\leipenglongworkbuddy（git 仓库实际位置）
 # 触发条件：目录内文件发生 新增 / 修改 / 删除
 # 执行动作：调用 大管家备份.sh 完成本地备份 + GitHub 推送
 #
@@ -20,7 +20,7 @@
 # ============================================================================
 
 param(
-    [string]$WatchPath = "C:\Users\Administrator\Desktop\leipenglongworkbuddy",
+    [string]$WatchPath = "C:\Users\Administrator\Desktop\leipenglongworkbuddy\leipenglongworkbuddy",
     [int]$PollSeconds = 60,
     [int]$SettleSeconds = 20
 )

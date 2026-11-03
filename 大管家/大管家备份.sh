@@ -30,7 +30,7 @@ export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
 export PYTHONIOENCODING=utf-8
 
-BASE="C:/Users/Administrator/Desktop/leipenglongworkbuddy"
+BASE="C:/Users/Administrator/Desktop/leipenglongworkbuddy/leipenglongworkbuddy"
 REMOTE="https://github.com/leipenglong/leipenglongworkbuddy.git"
 BRANCH="main"
 MIN_INTERVAL=600           # 最短提交间隔：10 分钟 = 600 秒
